@@ -123,6 +123,7 @@ window.CMBAP = window.CMBAP || {};
 		item.clone().appendTo( $wrap.find( '.attached' ) );
 
 		app.resetAttachedListItems( $wrap );
+		app.updateReadOnly($wrap);
 		app.updateRemaining($wrap);
 
 	};
