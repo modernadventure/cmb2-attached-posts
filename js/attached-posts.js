@@ -12,9 +12,10 @@ window.CMBAP = window.CMBAP || {};
 		app.$.retrievedPosts = $wrap.find( '.retrieved' );
 		app.$.attachedPosts  = $wrap.find( '.attached' );
 		app.doType           = $wrap.find( '.object-label' ).length;
+		app.$.attachedBoxes  = $wrap.length; // Check for multiple attached-post meta boxes
 	};
 
-	// Helper function to determine whteher we have exceeded our limit or not.
+	// Helper function to determine whether we have exceeded our limit or not.
 	app._hasExceeded = function ($wrap) {
 		var $input = app.getPostIdsInput($wrap);
 		var maxItems = $input.data('max-items');
@@ -26,8 +27,8 @@ window.CMBAP = window.CMBAP || {};
 	// Make sure we cannot attach more posts than we would like.
 	app.updateReadOnly = function ($wrap) {
 
-		// If we have exceeded our limit, then ensure the user cannot attach more items.
-		// If we haven't, make sure the user can attach items.
+		// IF we have exceeded our limit, then ensure the user cannot attach more items.
+		// ELSE, make sure the user can attach items.
 		if (app._hasExceeded($wrap)) {
 			// Also ensure items aren't draggable
 			// @see https://stackoverflow.com/questions/1324044/how-do-i-disable-a-jquery-ui-draggable
@@ -46,9 +47,11 @@ window.CMBAP = window.CMBAP || {};
 		var $remainingLabel = $wrap.find('.attached-posts-remaining');
 		var $remainingNumberLabel = $remainingLabel.find('.attached-posts-remaining-number');
 		var remainingNumber = 0;
+
 		if (typeof maxItems !== "undefined") {
 			// How many can we add?
 			remainingNumber = maxItems - currentNumberItems;
+
 			// Show the label and update the number inside
 			$remainingLabel.removeClass("hidden");
 			$remainingNumberLabel.html(remainingNumber);
@@ -96,7 +99,7 @@ window.CMBAP = window.CMBAP || {};
 	app.makeDroppable = function() {
 		app.$.attachedPosts.droppable({
 			accept: '.retrieved li',
-			drop: function(evt, ui) {
+			drop: function( evt, ui ) {
 				app.buildItems( ui.draggable );
 			}
 		}).sortable({
@@ -123,7 +126,6 @@ window.CMBAP = window.CMBAP || {};
 		item.clone().appendTo( $wrap.find( '.attached' ) );
 
 		app.resetAttachedListItems( $wrap );
-		app.updateReadOnly($wrap);
 		app.updateRemaining($wrap);
 
 	};
@@ -435,6 +437,7 @@ window.CMBAP = window.CMBAP || {};
 	};
 
 	app._openSearch = function( evt ) {
+		app.updateRetrievedPosts( $(this) );
 		app.openSearch( $( evt.currentTarget ) );
 	};
 
@@ -446,6 +449,14 @@ window.CMBAP = window.CMBAP || {};
 
 		app.search.trigger( 'open' );
 	};
+
+	app.updateRetrievedPosts = function( $this ){
+		// If more than one custom_attached_posts update cache with current metabox context
+		if ( app.$.attachedBoxes > 1 ) {
+			var $wrap            = $this.closest(' .attached-posts-wrap' );
+			app.$.retrievedPosts = $wrap.find( '.retrieved' );	
+		}
+	}
 
 	$( app.init );
 
