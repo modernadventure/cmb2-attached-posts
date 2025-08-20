@@ -341,7 +341,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @param  mixed  $object Post or User
 	 *
-	 * @return string         The thumbnail, if endabled/found.
+	 * @return string         The thumbnail, if enabled/found.
 	 */
 	public function get_thumb( $object ) {
 		$thumbnail = '';
